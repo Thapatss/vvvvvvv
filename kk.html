@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>happy birth! 🎂</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Kanit', sans-serif;
+      background: radial-gradient(circle, #fff3f3, #ffc1c1);
+      overflow: hidden;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #e74c3c;
+      margin-top: 30px;
+      animation: pop 0.8s ease-out;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      padding: 20px;
+    }
+
+    .gallery img {
+      width: 180px;
+      height: 240px;
+      object-fit: cover;
+      border-radius: 12px;
+      animation: float 4s infinite ease-in-out;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .cake {
+      margin: 20px auto;
+      width: 100px;
+      height: 140px;
+      background: #ff7675;
+      border-radius: 0 0 15px 15px;
+      position: relative;
+      animation: bounce 1.5s infinite ease-in-out;
+    }
+
+    .cake::before {
+      content: '';
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 25px;
+      background: gold;
+      border-radius: 50%;
+      animation: flicker 0.3s infinite alternate;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes flicker {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -100px;
+      width: 40px;
+      height: 55px;
+      border-radius: 50%;
+      animation: rise 10s linear infinite;
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      top: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 30px;
+      background: #888;
+    }
+
+    @keyframes rise {
+      0% { bottom: -100px; opacity: 0.7; }
+      100% { bottom: 110%; opacity: 0; }
+    }
+
+    .rabbit {
+      position: absolute;
+      bottom: 10px;
+      left: -100px;
+      width: 80px;
+      animation: hop 8s linear infinite;
+    }
+
+    @keyframes hop {
+      0%   { left: -100px; bottom: 10px; }
+      25%  { bottom: 30px; }
+      50%  { left: 50%; bottom: 10px; }
+      75%  { bottom: 30px; }
+      100% { left: 110%; bottom: 10px; }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .play-btn {
+      margin: 20px auto;
+      padding: 10px 25px;
+      font-size: 1.2rem;
+      background: #e17055;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .gallery img { width: 90%; height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<h1>🎉 happy birthday noey! 🎂</h1>
+
+<!-- แกลเลอรี -->
+<div class="gallery">
+  <img src="1.jpeg" alt="img1">
+  <img src="2.jpeg" alt="img2">
+  <img src="3.jpeg" alt="img3">
+  <img src="4.jpeg" alt="img3">
+  <img src="5.jpeg" alt="img3">
+  <img src="6.jpeg" alt="img3">
+  <img src="7.jpeg" alt="img3">
+
+</div>
+
+<!-- เค้ก -->
+<div class="cake"></div>
+
+<!-- กระต่าย -->
+<img src="BB.png" class="rabbit" alt="bunny">
+
+<!-- ปุ่มเล่นเพลง -->
+<button class="play-btn" onclick="document.getElementById('bgm').play()">▶️ click</button>
+
+<!-- เพลง -->
+<audio id="bgm" src="eunbi.mp3" preload="auto"></audio>
+
+<!-- ลูกโป่ง -->
+<script>
+  for (let i = 0; i < 12; i++) {
+    const b = document.createElement("div");
+    b.className = "balloon";
+    const color = `hsl(${Math.random() * 360}, 80%, 70%)`;
+    b.style.left = Math.random() * 100 + '%';
+    b.style.animationDuration = 5 + Math.random() * 5 + 's';
+    b.style.backgroundColor = color;
+    document.body.appendChild(b);
+  }
+</script>
+
+<!-- พลุ -->
+<script>
+  const canvas = document.getElementById('fireworks');
+  const ctx = canvas.getContext('2d');
+  let fireworks = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function Firework() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height;
+    this.targetY = Math.random() * canvas.height / 2;
+    this.speed = 2 + Math.random() * 3;
+    this.exploded = false;
+    this.particles = [];
+
+    this.update = function () {
+      if (!this.exploded) {
+        this.y -= this.speed;
+        if (this.y <= this.targetY) {
+          this.exploded = true;
+          for (let i = 0; i < 30; i++) {
+            this.particles.push(new Particle(this.x, this.y));
+          }
+        }
+      } else {
+        this.particles.forEach(p => p.update());
+      }
+    }
+
+    this.draw = function () {
+      if (!this.exploded) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = "white";
+        ctx.fill();
+      } else {
+        this.particles.forEach(p => p.draw());
+      }
+    }
+  }
+
+  function Particle(x, y) {
+    this.x = x;
+    this.y = y;
+    this.angle = Math.random() * 2 * Math.PI;
+    this.speed = Math.random() * 3 + 2;
+    this.radius = 2 + Math.random() * 2;
+    this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+    this.life = 100;
+
+    this.update = function () {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.life--;
+    }
+
+    this.draw = function () {
+      if (this.life > 0) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (Math.random() < 0.04) fireworks.push(new Firework());
+    fireworks.forEach(f => f.update());
+    fireworks.forEach(f => f.draw());
+    fireworks = fireworks.filter(f => f.exploded === false || f.particles.some(p => p.life > 0));
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+</script>
+
+</body>
+</html>
